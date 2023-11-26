@@ -1,0 +1,13 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: reviewbook
+  labels:
+    app: reviewbook
+spec:
+  ports:
+  - port: 3000
+    targetPort: http-server
+  selector:
+    app: reviewbook
+  type: LoadBalancer
