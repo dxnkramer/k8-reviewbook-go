@@ -1,10 +1,13 @@
-FROM golang:1.10.0
+FROM golang:1.17
 RUN go get github.com/codegangsta/negroni \
            github.com/gorilla/mux \
-           github.com/xyproto/simpleredis
+           github.com/xyproto/simpleredis/v2
 WORKDIR /app
-ADD ./main.go .
+COPY go.mod .
+COPY go.sum .
+COPY ./main.go .
 RUN CGO_ENABLED=0 GOOS=linux go build -o main .
+
 
 FROM scratch
 WORKDIR /app

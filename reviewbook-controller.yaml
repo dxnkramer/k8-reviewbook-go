@@ -15,7 +15,8 @@ spec:
     spec:
       containers:
       - name: reviewbook
-        image: registry.k8s.io/guestbook:v3
+        image: dxnkramer/k8:latest
+        imagePullPolicy: Always
         ports:
         - name: http-server
           containerPort: 3000
