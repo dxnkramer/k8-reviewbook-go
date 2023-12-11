@@ -1,138 +1,75 @@
-# ReviewBook Kubernetes Deployment Lab
+# Leeds Beckett University Cloud Computing Lab
 
-## Lab Contents
+## Deployment of ReviewBook System using Kubernetes and Redis on Digital Ocean
+---
 
-- **Introduction**
-  - Overview of the lab objectives.
-  - A brief introduction to Kubernetes and the ReviewBook application.
-- **Step Zero: Prerequisites**
-- **Step One: Creating the Kubernetes Cluster on DigitalOcean**
-- **Step Two: Creating the Redis Master Pod**
-- **Step Three: Creating the Redis Master Service**
-- **Step Four: Creating the Redis Replica Pods**
-- **Step Five: Creating the Redis Replica Service**
-- **Step Six: Creating the ReviewBook Pods**
-- **Step Seven: Creating the ReviewBook Service**
-- **Step Eight: Interacting with the ReviewBook**
-- **Step Nine: Cleanup**
-- **Conclusion**
-  - Summarizing the skills and knowledge gained.
-  - Additional resources for further learning.
-- **Appendix**
-  - Common issues and troubleshooting tips.
-  - Reference links and additional reading materials.
+## Introduction
+This lab involves deploying the ReviewBook application using Kubernetes (K8s) and Redis on Digital Ocean. It provides an in-depth understanding of Kubernetes' orchestration capabilities, Redis as a database, and the Digital Ocean cloud platform.
 
-## Step-by-Step Guide
+### Key Concepts
+- **Kubernetes (K8s)**: An open-source system for automating deployment, scaling, and management of containerized applications.
+- **Redis**: An in-memory data structure store, used as a database, cache, and message broker.
+- **Digital Ocean**: A cloud platform offering Infrastructure-as-a-Service.
 
-### Introduction
+---
 
-- **Objective:** Understand Kubernetes' role in deploying and managing multi-tier web applications, using the ReviewBook application as a case study.
-- **Overview of the ReviewBook Application:** Explain the architecture of the ReviewBook application, including its front-end, Redis master, and Redis slave components.
+## Lab Structure
 
-### Step Zero: Prerequisites
+### Introduction to Kubernetes
+Kubernetes, or K8s, is a powerful tool for managing containerized applications, offering features like automated scheduling, self-healing, load balancing, and horizontal scaling.
 
-- **DigitalOcean Account Setup:** Ensure your DigitalOcean account is active. Sign up at DigitalOcean if needed.
-- **Install kubectl:** Follow the official Kubernetes installation guide to install kubectl.
-- **Install doctl:** Download and install doctl from the DigitalOcean GitHub repository.
-- **Clone the Git repo for the lab:** `git clone https://github.com/dxnkramer/k8-reviewbook-go`
+### Step-by-Step Guide
 
-### Step One: Creating the Kubernetes Cluster on DigitalOcean
+#### Step Zero: Prerequisites
+- Set up a DigitalOcean account.
+- Install `kubectl`, `doctl`, and optionally Docker Desktop.
+- Clone the lab Git repository: `git clone https://github.com/dxnkramer/k8-ReviewBook-go`.
 
-- **Create a DigitalOcean API Token:**
-  - Log in to the DigitalOcean Control Panel.
-  - Navigate to the API section in the main navigation.
-  - Click the "Generate New Token" button.
-  - Fill out the fields in the new personal access token window.
-  - Record the new token.
+#### Step One: Creating the Kubernetes Cluster on DigitalOcean
+- Generate a DigitalOcean API Token.
+- Authorize `doctl` using the API token.
+- Create a Kubernetes cluster with `doctl kubernetes cluster create`.
 
-- **Authorize doctl:**
-  - Use the API token to grant doctl access to your DigitalOcean account.
-  - Run `doctl auth init` and pass in the token string.
+#### Step Two: Creating the Redis Master Pod
+- Deploy a Redis Master Pod using `redis-master-controller.yaml`.
+- Check the pod's status with `kubectl get pods`.
 
-- **Create the Kubernetes Cluster:**
-  - Use doctl to create your Kubernetes cluster.
-  - Example command: `doctl kubernetes cluster create reviewbook-cluster --region lon1 --size s-1vcpu-2gb`
-  - Configure kubectl to interact with your cluster.
+#### Step Three: Creating the Redis Master Service
+- Establish the Redis Master Service using `redis-master-service.yaml`.
+- Verify the service with `kubectl get services`.
 
-- **Verify the Cluster:**
-  - Verify your cluster is active using `kubectl get nodes`.
+#### Step Four: Creating the Redis Replica Pods
+- Set up Redis Replica Pods with `redis-replica-controller.yaml`.
+- Confirm their status with `kubectl get pods`.
 
-### Step Two: Creating the Redis Master Pod
+#### Step Five: Creating the Redis Replica Service
+- Create the Redis Replica Service using `redis-replica-service.yaml` and `redis-slave-service.yaml`.
+- Validate the service with `kubectl get services`.
 
-- **Deployment:**
-  - Use `redis-master-controller.yaml` to create a replication controller and master Redis pod.
-  - Run `kubectl create -f <path to redis-master-controller.yaml>`
+#### Step Six: Creating the ReviewBook Pods
+- Deploy the ReviewBook Pods using `ReviewBook-controller.yaml`.
+- Check the pods with `kubectl get pods`.
 
-- **Verification:**
-  - Verify the Redis-master controller using `kubectl get rc`.
-  - Check the Redis master pod using `kubectl get pods`.
+#### Step Seven: Creating the ReviewBook Service
+- Set up the ReviewBook Service with `ReviewBook-service.yaml`.
+- Verify the service's accessibility with `kubectl get services`.
 
-### Step Three: Creating the Redis Master Service
+#### Step Eight: Interacting with the ReviewBook
+- Access the ReviewBook application via the external IP address provided by `kubectl get services`.
 
-- **Service Creation:**
-  - Use `redis-master-service.yaml` to create the master replication controller.
-  - Run `kubectl create -f <path to redis-master-service.yaml>`
+#### Step Nine: Cleanup and Destroy
+- Remove all resources with `kubectl delete -f .` and `doctl kubernetes cluster delete <Cluster-Name>`.
 
-- **Verification:**
-  - Verify the Redis-master service using `kubectl get services`.
+### Advanced Tasks
+- Experiment with modifying replica counts and resource limits in `ReviewBook-controller.yaml`.
 
-### Step Four: Creating the Redis Replica Pods
+### Appendix
+- **Appendix A**: Using the .tar File
+- **Appendix B**: Building a Docker Image from Repository Files
 
-- **Deployment:**
-  - Use `redis-replica-controller.yaml` to create the replication controller.
-  - Run `kubectl create -f <path to redis-replica-controller.yaml>`
+---
 
-- **Verification:**
-  - Verify the Redis master and replica pods using `kubectl get pods`.
+## References
+- Kubernetes, Docker, DigitalOcean, and related technologies (detailed references provided in the lab sheet).
 
-### Step Five: Creating the Redis Replica Service
-
-- **Service Creation:**
-  - Use `redis-replica-service.yaml` to create the redis replica service.
-  - Run `kubectl create -f <path to redis-replica-service.yaml>`
-
-- **Verification:**
-  - Verify the Redis replica service using `kubectl get services`.
-
-### Step Six: Creating the ReviewBook Pods
-
-- **Custom Docker Image:**
-  - The ReviewBook application uses a custom Docker image hosted on Docker Hub at `dxnkramer/k8:latest`.
-
-- **Deployment:**
-  - Use `ReviewBook-controller.yaml` to create the review book replication controller.
-  - Run `kubectl create -f <path to reviewbook-controller.yaml>`
-
-- **Verification:**
-  - Verify the reviewbook replication controller and pods using `kubectl get rc` and `kubectl get pods`.
-
-### Step Seven: Creating the ReviewBook Service
-
-- **Service Creation:**
-  - Use `reviewbook-service.yaml` to create the review book service.
-  - Run `kubectl create -f <path to reviewbook-service.yaml>`
-
-- **Verification:**
-  - Verify the ReviewBook service using `kubectl get services`.
-
-### Step Eight: Interacting with the ReviewBook
-
-- **Accessing the Application:**
-  - Navigate to `http://external-ip-address:3000` to interact with the ReviewBook application.
-  - Find the external IP address using `kubectl get services`.
-
-### Step Nine: Cleanup and Destroy
-
-- **Cleanup:**
-  - Run `kubectl delete -f .` and `doctl kubernetes cluster delete <Cluster-Name>` to destroy all resources.
-  - Confirm the cleanup in the DigitalOcean control panel.
-
-## Conclusion
-
-- Summarize the skills and knowledge gained from this lab.
-- Explore additional resources for further learning.
-
-## Appendix
-
-- Common issues and troubleshooting tips.
-- Reference links and additional reading materials.
+---
